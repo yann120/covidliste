@@ -109,7 +109,29 @@ class VaccinationCenter < ApplicationRecord
       .limit(limit)
   end
 
+  def approximated_lat
+    return if lat.nil?
+    (lat + get_random_for_coord("lat")).round(5)
+  end
+
+  def approximated_lon
+    return if lon.nil?
+    (lon + get_random_for_coord("lon")).round(5)
+  end
+
   private
+
+  def get_random_for_coord(field)
+    # generate always the same value using seeder but specific for a given field
+    rseeder = get_rseeder(field)
+    rseeder.rand(-0.04..0.04).round(5)
+  end
+
+  def get_rseeder(field)
+    return Random.new if address.nil?
+    # generate always the same seeder using address but specific for a given field
+    Random.new(Digest::MD5.hexdigest(field + (address.present? ? address : Random.new_seed)).to_i(10))
+  end
 
   def push_to_slack
     return unless Rails.env.production?
