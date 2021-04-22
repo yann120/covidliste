@@ -11,7 +11,7 @@ class PagesController < ApplicationController
   end
 
   def carte
-    @vaccination_centers = VaccinationCenter.all.filter { |v| v.confirmed? }.map do |v|
+    @vaccination_centers = VaccinationCenter.confirmed.map do |v|
       {
         "name" => "Lieu de vaccination inscrit",
         "description" => "La localisation est approximée à quelques kilomètres",
